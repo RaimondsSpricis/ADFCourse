@@ -22,12 +22,13 @@ public class CourseService {
         return em.createQuery(query, Course.class).getResultList();
     }
 
-    public void addCourse(CourseDTO dto) {
+    public Integer addCourse(CourseDTO dto) {
         var c = new Course();
         c.setTitle(dto.title());
         c.setDescription(dto.description());
         c.setStudyTime(dto.studyTime());
         em.persist(c);
+        return c.getId();
     }
 
     public void updateCourse(Integer id, CourseDTO dto) {

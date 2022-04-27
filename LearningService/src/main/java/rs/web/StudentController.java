@@ -23,8 +23,8 @@ public class StudentController {
     }
 
     @PostMapping("/students")
-    public void addStudent(@RequestBody StudentDTO dto) {
-        service.addStudent(dto);
+    public Integer addStudent(@RequestBody StudentDTO dto) {
+        return service.addStudent(dto);
     }
 
     @PutMapping("/students/{id}")

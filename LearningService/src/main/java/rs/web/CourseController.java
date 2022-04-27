@@ -23,8 +23,8 @@ public class CourseController {
     }
 
     @PostMapping("/courses")
-    public void addCourse(@RequestBody CourseDTO dto) {
-        service.addCourse(dto);
+    public Integer addCourse(@RequestBody CourseDTO dto) {
+        return service.addCourse(dto);
     }
 
     @PutMapping("/courses/{id}")

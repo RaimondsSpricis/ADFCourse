@@ -22,13 +22,14 @@ public class StudentService {
         return em.createQuery(query, Student.class).getResultList();
     }
 
-    public void addStudent(StudentDTO dto) {
+    public Integer addStudent(StudentDTO dto) {
         var s = new Student();
         s.setFirstName(dto.firstName());
         s.setSurname(dto.surname());
         s.setEmail(dto.email());
         s.setEmailNotification(dto.emailNotification());
         em.persist(s);
+        return s.getId();
     }
 
     public void updateStudent(Integer id, StudentDTO dto) {

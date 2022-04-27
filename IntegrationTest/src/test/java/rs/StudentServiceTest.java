@@ -20,6 +20,6 @@ public class StudentServiceTest {
     @Then("the response contains the student with the id {string}")
     public void the_response_contain_the_student(String id) {
         response.then().statusCode(200).assertThat()
-                .body("id[0]", equalTo(2));
+                .body("id[0]", equalTo(1));
     }
 }

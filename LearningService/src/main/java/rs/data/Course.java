@@ -1,7 +1,10 @@
 package rs.data;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Entity
 @Table(name = "courses")
@@ -11,6 +14,8 @@ public class Course {
     @Column(name = "id") private Integer id;
     @Column(name = "title") private String title;
     @Column(name = "description") private String description;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     @Column(name = "study_time") private BigDecimal studyTime;
 
     public Course() {}
@@ -52,5 +57,18 @@ public class Course {
 
     public void setStudyTime(BigDecimal studyTime) {
         this.studyTime = studyTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Course course = (Course) o;
+        return Objects.equals(id, course.id) && Objects.equals(title, course.title) && Objects.equals(description, course.description) && Objects.equals(studyTime, course.studyTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, description, studyTime);
     }
 }

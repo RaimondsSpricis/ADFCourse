@@ -7,17 +7,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import rs.data.Student;
+import rs.data.*;
 import rs.services.StudentService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(StudentController.class)
 class StudentControllerTest {
@@ -29,10 +28,10 @@ class StudentControllerTest {
     void getStudent() throws Exception {
         var id = 22;
         var time = LocalDateTime.of(2022, 1, 3, 9, 9, 22);
-        var s = new Student(id, time, "Jane", "Wolf", "jane.wolf@qwerty.com", true);
+        var s = new Student(id, time, "Jane", "Wolf", "jane.wolf@qwertz.com", true);
         Mockito.when(service.getStudent(id))
                 .thenReturn(s);
-        mvc.perform(get("/students/" + id).contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/students/{id}", id).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(id)))
                 .andExpect(jsonPath("$.registered", is(time.toString())))
@@ -40,6 +39,27 @@ class StudentControllerTest {
                 .andExpect(jsonPath("$.surname", is(s.getSurname())))
                 .andExpect(jsonPath("$.email", is(s.getEmail())))
                 .andExpect(jsonPath("$.emailNotification", is(s.getEmailNotification())));
+    }
+
+    @Test
+    void getStudentJson() throws Exception {
+        var id = 22;
+        var time = LocalDateTime.of(2022, 1, 3, 9, 9, 22);
+        var s = new Student(id, time, "Jane", "Wolf", "jane.wolf@qwertz.com", true);
+        var test = """
+            {
+                "id": 22,
+                "registered": "2022-01-03T09:09:22",
+                "firstName": "Jane",
+                "surname": "Wolf",
+                "email": "jane.wolf@qwertz.com",
+                "emailNotification": true
+            }""";
+        Mockito.when(service.getStudent(id))
+                .thenReturn(s);
+        mvc.perform(get("/students/{id}", id).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(test));
     }
 
     @Test
@@ -52,14 +72,28 @@ class StudentControllerTest {
         );
         Mockito.when(service.getStudents())
                 .thenReturn(list);
-        mvc.perform(get("/students").contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/students").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", hasSize(2)))
-                .andExpect(jsonPath("$[*].id", contains(list.get(0).getId(), list.get(1).getId())))
-                .andExpect(jsonPath("$[*].registered", contains(list.get(0).getRegistered().toString(), list.get(1).getRegistered().toString())))
-                .andExpect(jsonPath("$[*].firstName", contains(list.get(0).getFirstName(), list.get(1).getFirstName())))
-                .andExpect(jsonPath("$[*].surname", contains(list.get(0).getSurname(), list.get(1).getSurname())))
-                .andExpect(jsonPath("$[*].email", contains(list.get(0).getEmail(), list.get(1).getEmail())))
-                .andExpect(jsonPath("$[*].emailNotification", contains(list.get(0).getEmailNotification(), list.get(1).getEmailNotification())));
+                .andExpect(jsonPath("$[*].id", is(list.stream().map(Student::getId).collect(Collectors.toList()))))
+                .andExpect(jsonPath("$[*].registered", is(list.stream().map(x -> x.getRegistered().toString()).collect(Collectors.toList()))))
+                .andExpect(jsonPath("$[*].firstName", is(list.stream().map(Student::getFirstName).collect(Collectors.toList()))))
+                .andExpect(jsonPath("$[*].surname", is(list.stream().map(Student::getSurname).collect(Collectors.toList()))))
+                .andExpect(jsonPath("$[*].email", is(list.stream().map(Student::getEmail).collect(Collectors.toList()))))
+                .andExpect(jsonPath("$[*].emailNotification", is(list.stream().map(Student::getEmailNotification).collect(Collectors.toList()))));
+    }
+
+    @Test
+    void addStudent() throws Exception {
+        var id = 22;
+        var dto = new StudentDTO("Jane", "Wolf", "jane.wolf@qwerty.com", true);
+        Mockito.when(service.addStudent(dto))
+                .thenReturn(id);
+        mvc.perform(post("/students")
+                .content(Util.toJson(dto))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(String.valueOf(id)));
     }
 }

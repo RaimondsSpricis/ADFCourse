@@ -1,6 +1,6 @@
-insert into students (first_name, surname, email, email_notification) values
-    ('John', 'Smith', 'john.smith@abc.com', 0),
-    ('Jane', 'Eastwood', 'jane.eastwood@qwerty.com', 1);
+insert into students (registered, first_name, surname, email, email_notification) values
+    ('2022-02-28 08:23:31', 'John', 'Smith', 'john.smith@abc.com', 0),
+    ('2022-04-04 19:09:01', 'Jane', 'Eastwood', 'jane.eastwood@qwerty.com', 1);
 
 insert into courses (title, description, study_time) values
     ('JavaScript for Beginners', 'The basics of JavaScript: language syntax, GUI building in the browser, Node.js runtime environment, practice projects.', 160),

@@ -2,6 +2,7 @@ package rs.data;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "students")
@@ -72,5 +73,18 @@ public class Student {
 
     public void setEmailNotification(Boolean emailNotification) {
         this.emailNotification = emailNotification;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Student student = (Student) o;
+        return Objects.equals(id, student.id) && Objects.equals(registered, student.registered) && Objects.equals(firstName, student.firstName) && Objects.equals(surname, student.surname) && Objects.equals(email, student.email) && Objects.equals(emailNotification, student.emailNotification);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, registered, firstName, surname, email, emailNotification);
     }
 }

@@ -1,4 +1,6 @@
 # Ignored files
 .idea/
+IntegrationTest/target/
+LearningService/target/
 MessageBroker/
 Notes.txt
